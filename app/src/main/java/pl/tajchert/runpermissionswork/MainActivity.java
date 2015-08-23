@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Access location = " + hasAccess, Toast.LENGTH_SHORT).show();
         } else {
             //We don't, lets ask for it. Result will be thrown in onRequestPermissionsResult()
+            //TODO DIY, lets check if we should explain to user why we need that permission for (true if user already said "deny", or turned off that permission).
+            //TODO DIY, use for this ActivityCompat.shouldShowRequestPermissionRationale()
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
         }
     }
