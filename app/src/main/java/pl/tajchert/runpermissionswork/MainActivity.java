@@ -3,16 +3,21 @@ package pl.tajchert.runpermissionswork;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_LOCATION = 124;
 
+    @Bind(R.id.main_layout)
+    View mLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +36,24 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Access location = " + hasAccess, Toast.LENGTH_SHORT).show();
         } else {
             //We don't, lets ask for it. Result will be thrown in onRequestPermissionsResult()
-            //TODO DIY, lets check if we should explain to user why we need that permission for (true if user already said "deny", or turned off that permission).
-            //TODO DIY, use for this ActivityCompat.shouldShowRequestPermissionRationale()
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                //User already refused to give us this permission or removed it
+                //Now he/she can mark "never ask again" (sic!), so we better explain why we need it
+                Snackbar.make(mLayout, "Here we explain to user why we need to know location",
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
+                            }
+                        })
+                        .show();
+            } else {
+                //First time asking for permission
+                // or phone doesn't offer permission
+                // or user marked "never ask again"
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
+            }
         }
     }
 
