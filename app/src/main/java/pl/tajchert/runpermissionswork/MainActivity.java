@@ -19,6 +19,11 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonLocation)
     public void clickButtLocation() {
+        //Ok so when targeting API=23 we will not have "out of the box" permission to do stuff.
+        //Lets try ask user for it!
+        //Try yourself if not move to next commit
+        //Useful methods: ActivityCompat.checkSelfPermission(), ActivityCompat.requestPermissions(), and remember to handle result in onRequestPermissionsResult()
+        //Good luck!
         boolean hasAccess = Tools.accessLocation(this);
         Toast.makeText(this, "Location access = " + hasAccess, Toast.LENGTH_SHORT).show();
     }
