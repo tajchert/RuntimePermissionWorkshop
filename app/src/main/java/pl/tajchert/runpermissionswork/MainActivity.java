@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -37,8 +38,24 @@ public class MainActivity extends AppCompatActivity {
     public void clickButtCall() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "We don't have any permission for calling");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE_CALL);
-            //TODO instead of asking right away check if user already clicked DENY, this time user will have and option to click "Never show again"
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
+                //User already refused to give us this permission or removed it
+                //Now he/she can mark "never ask again" (sic!), so we better explain why we need it
+                Snackbar.make(mLayout, "Here we explain to user why we neeed to use call feature",
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE_CALL);
+                            }
+                        })
+                        .show();
+            } else {
+                // We do not need to explain - first time asking for permission
+                // or phone doesn't offer permission
+                // or user marked "never ask again"
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE_CALL);
+            }
         } else {
             callTest();
         }
