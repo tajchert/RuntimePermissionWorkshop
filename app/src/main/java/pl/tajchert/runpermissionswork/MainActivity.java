@@ -43,13 +43,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setData(Uri.parse("tel:" + "11122233"));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "We don't have any permission for calling");
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            //TODO request a permission using ActivityCompat.requestPermissions(), handle result in onRequestPermissionsResult()
             return;
         }
         startActivity(intent);
