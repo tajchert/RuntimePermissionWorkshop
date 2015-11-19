@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "We don't have any permission for calling");
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE_CALL);
+            //TODO instead of asking right away check if user already clicked DENY, this time user will have and option to click "Never show again"
         } else {
             callTest();
         }
