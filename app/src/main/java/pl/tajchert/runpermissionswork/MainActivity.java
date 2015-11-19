@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        //TODO monitor permission with Nammu library, use Nammu.init() to init library
+        //TODO and Nammu.permissionCompare() to check if permissions changed - onResume is recommended
     }
 
     @Override
