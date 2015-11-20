@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonCall)
     public void clickButtCall() {
+        //TODO use Nammu to ask for permission and call callTest() if we have it, use Nammu.checkPermission() and Nammu.askForPermission(), instead of checkSelfPermission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "We don't have any permission for calling");
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
