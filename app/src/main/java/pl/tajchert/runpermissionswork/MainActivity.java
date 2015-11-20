@@ -14,6 +14,8 @@ import android.view.View;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pl.tajchert.nammu.Nammu;
+import pl.tajchert.nammu.PermissionListener;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -27,13 +29,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        //TODO monitor permission with Nammu library, use Nammu.init() to init library
-        //TODO and Nammu.permissionCompare() to check if permissions changed - onResume is recommended
+        Nammu.init(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Nammu.permissionCompare(new PermissionListener() {
+            @Override
+            public void permissionsChanged(String s) {
+                //Called each time when some permission changes
+                Log.d(TAG, "permissionsChanged: ");
+            }
+
+            @Override
+            public void permissionsGranted(String s) {
+                //New permission was granted to our app
+                Log.d(TAG, "permissionsGranted: ");
+            }
+
+            @Override
+            public void permissionsRemoved(String s) {
+                //Most useful - we lost some permission, maybe check what it was and handle it?
+                Log.e(TAG, "permissionsRemoved: ");
+            }
+        });
     }
 
     @OnClick(R.id.buttonCall)
