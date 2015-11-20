@@ -2,19 +2,18 @@ package pl.tajchert.runpermissionswork;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pl.tajchert.nammu.Nammu;
+import pl.tajchert.nammu.PermissionCallback;
 import pl.tajchert.nammu.PermissionListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -58,27 +57,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonCall)
     public void clickButtCall() {
-        //TODO use Nammu to ask for permission and call callTest() if we have it, use Nammu.checkPermission() and Nammu.askForPermission(), instead of checkSelfPermission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            Log.e(TAG, "We don't have any permission for calling");
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
-                //User already refused to give us this permission or removed it
-                //Now he/she can mark "never ask again" (sic!), so we better explain why we need it
-                Snackbar.make(mLayout, "Here we explain to user why we neeed to use call feature",
-                        Snackbar.LENGTH_INDEFINITE)
-                        .setAction("OK", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE_CALL);
-                            }
-                        })
-                        .show();
-            } else {
-                // We do not need to explain - first time asking for permission
-                // or phone doesn't offer permission
-                // or user marked "never ask again"
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE_CALL);
-            }
+        if(!Nammu.checkPermission(Manifest.permission.CALL_PHONE)) {
+            Log.e(TAG, "We dont have permission for calling");
+            Nammu.askForPermission(this, Manifest.permission.CALL_PHONE, permissionCallbackCallPhone);
         } else {
             callTest();
         }
@@ -96,13 +77,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case (REQUEST_CODE_CALL):
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    callTest();
-                }
-                break;
-            //Here goes other permissions, for example if you ask for Location permission, here handle as well result
-        }
+        Nammu.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+    PermissionCallback permissionCallbackCallPhone = new PermissionCallback() {
+        @Override
+        public void permissionGranted() {
+            callTest();
+        }
+
+        @Override
+        public void permissionRefused() {
+            Toast.makeText(MainActivity.this, "No permission, aboard", Toast.LENGTH_SHORT).show();
+        }
+    };
 }
